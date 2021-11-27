@@ -1,15 +1,18 @@
 from flask import Flask, jsonify, request
+
 from bson import ObjectId
 from flask_pymongo import PyMongo
 
+from dateutil.relativedelta import relativedelta
+import datetime
 
 app = Flask(__name__)
 
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/employee'
+app.config['MONGO_URI'] = 'mongodb://127.0.0.1:27017/employee'
 
 mongo = PyMongo(app)
 
-db = mongo.db.employee
+db = mongo.db
 
 # ROUTES 
 
@@ -21,8 +24,8 @@ def createEmployee():
         'nombre': request.json['nombre'],
         'apellido': request.json['apellido'],
         'dni': request.json['dni'],
-        'fecha_nacimiento': request.json['fecha_nacimiento'],
-		'fecha_ingreso': request.json['fecha_ingreso'],
+        'fecha_nacimiento': datetime.datetime.strptime(request.json['fecha_nacimiento'], '%d-%m-%Y'),
+		'fecha_ingreso': datetime.datetime.strptime(request.json['fecha_ingreso'], '%d-%m-%Y'),
     })
     return jsonify(str(ObjectId(id)))
 
@@ -69,13 +72,43 @@ def getEmployee(id):
 #################################################### FILTRO POR EDAD #################################################
 @app.route('/filter_by_age/<edad>', methods=['GET'])
 def employees_by_age(edad):
-    return jsonify({ "mesage": "All Employees with age {}.".format(edad) })
+    now = datetime.datetime.now()
+    # con la fecha seteo el dia limite de busqueda y lo guardo en la variable hasta
+    hasta = now - relativedelta(years=int(edad))
+    # le resto un año y un dia para setear el umbral de fechas de busqueda
+    desde = (hasta - relativedelta(years=1) - datetime.timedelta(days=1)) # bajo lte
+    employee_filtered = db.employee.find({"fecha_nacimiento": { "$gte": desde, "$lte": hasta }} )
+    employees = []
+    for doc in employee_filtered:
+        employees.append({
+            '_id': str(ObjectId(doc['_id'])),
+            'nombre': doc['nombre'],
+            'apellido': doc['apellido'],
+            'dni': doc['dni'],
+            'fecha_nacimiento': doc['fecha_nacimiento'],
+			'fecha_ingreso': doc['fecha_ingreso'],
+        })
+    return jsonify(employees)
 
 
 ################################################ FILTRO POR ANTIGUEDAD ###############################################
 @app.route('/filter_by_antiquity/<antiguedad>', methods=['GET'])
 def employees_by_antiquity(antiguedad):
-    return jsonify({ "mesage": "All Employees with antiquity {}.".format(antiguedad)})
+    now = datetime.datetime.now()
+    hasta = now - relativedelta(years=int(antiguedad))
+    desde = (hasta - relativedelta(years=1) - datetime.timedelta(days=1))
+    employee_filtered = db.employee.find({"fecha_ingreso": { "$gte": desde, "$lte": hasta }} )
+    employees = []
+    for doc in employee_filtered:
+        employees.append({
+            '_id': str(ObjectId(doc['_id'])),
+            'nombre': doc['nombre'],
+            'apellido': doc['apellido'],
+            'dni': doc['dni'],
+            'fecha_nacimiento': doc['fecha_nacimiento'],
+			'fecha_ingreso': doc['fecha_ingreso'],
+        })
+    return jsonify(employees)
 
 
 # ----------------------- all employees
