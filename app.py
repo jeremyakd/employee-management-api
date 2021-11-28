@@ -88,7 +88,11 @@ def employees_by_age(edad):
             'fecha_nacimiento': doc['fecha_nacimiento'],
 			'fecha_ingreso': doc['fecha_ingreso'],
         })
-    return jsonify(employees)
+    response = {
+        'message': 'Se encontraron {} empleados con {} años.'.format(len(employees), edad),
+        'response': employees
+    }
+    return jsonify(response)
 
 
 ################################################ FILTRO POR ANTIGUEDAD ###############################################
@@ -111,7 +115,7 @@ def employees_by_antiquity(antiguedad):
     return jsonify(employees)
 
 
-# ----------------------- all employees
+############################################### TODOS LOS EMPLEADOS ##################################################
 @app.route('/employees', methods=['GET'])
 def getEmployees():
     employees = []
@@ -125,6 +129,22 @@ def getEmployees():
 			'fecha_ingreso': doc['fecha_ingreso'],
         })
     return jsonify(employees)
+
+############################################ BORRAR TODOS LOS EMPLEADOS #############################################
+@app.route('/employees', methods=['DELETE'])
+def deleteEmployees():
+    db.employee.delete_many({})
+    return jsonify({"message": "droped!"})
+
+
+################################################ CARGAR EMPLEADOS ###################################################
+@app.route('/load-data/<cantidad>', methods=['POST'])
+def load_data(cantidad):
+    print(request.json)
+    from load_data import create_names
+    _employees = create_names(cantidad)
+    print("_employees", _employees)
+    return jsonify({ "mesage": _employees })
 
 if __name__ == "__main__":
     app.run(debug=True)
