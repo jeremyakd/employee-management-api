@@ -8,7 +8,7 @@ import datetime
 
 app = Flask(__name__)
 
-app.config['MONGO_URI'] = 'mongodb://127.0.0.1:27017/employee'
+app.config['MONGO_URI'] = 'mongodb://mongo:27017/employee'
 
 mongo = PyMongo(app)
 
