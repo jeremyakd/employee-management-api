@@ -1,9 +1,14 @@
 from faker import Factory
 import mongoengine
 import datetime
+import os
+
+MONGO_URL = os.environ['MONGO_URL']
+MONGO_PORT = os.environ['MONGO_PORT']
+MONGO_DB = os.environ['MONGO_DB']
 
 def create_names(cant):
-    client = mongoengine.connect(host='mongodb://localhost:27017/employee')
+    client = mongoengine.connect(host='mongodb://' + MONGO_URL + ':' +  MONGO_PORT + '/' + MONGO_DB)
     db = client.employee
     fake = Factory.create()
     for x in range(int(cant)):
