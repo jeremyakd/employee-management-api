@@ -3,7 +3,7 @@ import mongoengine
 import datetime
 
 def create_names(cant):
-    client = mongoengine.connect(host='mongodb://mongo:27017/employee')
+    client = mongoengine.connect(host='mongodb://localhost:27017/employee')
     db = client.employee
     fake = Factory.create()
     for x in range(int(cant)):
@@ -27,7 +27,6 @@ def create_names(cant):
                 'fecha_ingreso': datetime.datetime.combine(fake_f_ingreso, datetime.datetime.min.time()),
                 }
             )
-            print("result", result)
         except Exception as e:
             print("e", e)
             return False
