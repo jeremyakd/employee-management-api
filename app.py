@@ -4,11 +4,17 @@ from bson import ObjectId
 from flask_pymongo import PyMongo
 
 from dateutil.relativedelta import relativedelta
-import datetime
+import datetime, os
+
+from flask_swagger_ui import get_swaggerui_blueprint
+
+MONGO_URL = os.environ['MONGO_URL']
+MONGO_PORT = os.environ['MONGO_PORT']
+MONGO_DB = os.environ['MONGO_DB']
 
 app = Flask(__name__)
 
-app.config['MONGO_URI'] = 'mongodb://mongo:27017/employee'
+app.config['MONGO_URI'] = 'mongodb://' + MONGO_URL + ':' +  MONGO_PORT + '/' + MONGO_DB
 
 mongo = PyMongo(app)
 
@@ -19,7 +25,6 @@ db = mongo.db
 ######################################################## ALTA ########################################################
 @app.route('/employee', methods=['POST'])
 def createEmployee():
-    print(request.json)
     id = db.employee.insert({
         'nombre': request.json['nombre'],
         'apellido': request.json['apellido'],
@@ -53,9 +58,7 @@ def updateEmployee(id):
 #################################################### CONSULTA POR ID #################################################
 @app.route('/employee/<id>', methods=['GET'])
 def getEmployee(id):
-    print("id", id)
     employee = db.employee.find_one({'_id': ObjectId(id)})
-    print(employee)
     if employee is not None:
         return jsonify({
             '_id': str(ObjectId(employee['_id'])),
@@ -140,10 +143,8 @@ def deleteEmployees():
 ################################################ CARGAR EMPLEADOS ###################################################
 @app.route('/load-data/<cantidad>', methods=['POST'])
 def load_data(cantidad):
-    print(request.json)
     from load_data import create_names
     _employees = create_names(cantidad)
-    print("_employees", _employees)
     return jsonify({ "mesage": _employees })
 
 if __name__ == "__main__":
