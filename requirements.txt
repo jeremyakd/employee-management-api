@@ -5,6 +5,7 @@ Flask==2.0.2
 Flask-Cors==3.0.10
 Flask-MongoAlchemy==0.7.1
 Flask-PyMongo==2.3.0
+flask-swagger-ui==3.36.0
 fonttools==4.28.2
 gunicorn==20.1.0
 itsdangerous==2.0.1
