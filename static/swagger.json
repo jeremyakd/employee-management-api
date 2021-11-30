@@ -1,0 +1,316 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"description": "CRUD de empleados con Flask & MongoDB.",
+		"version": "1.0.0",
+		"title": "Register registration."
+	},
+	"paths": {
+		"/employees": {
+			"get": {
+				"tags": [
+					"Manage all Employees."
+				],
+				"summary": "Returns all Employees in DB.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/components/schemas/employees"
+						}
+					}
+				}
+			},
+			"delete": {
+				"summary": "Delete all Employees in DB.",
+				"tags": [
+					"Manage all Employees."
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/components/schemas/employees"
+						}
+					}
+				}
+			}
+		},
+		"/employee/{id}": {
+			"parameters": [
+				{
+					"name": "id",
+					"in": "path",
+					"required": true,
+					"description": "ID of the employee that we want to match",
+					"type": "string"
+				}
+			],
+			"post": {
+				"summary": "Edit a employee by ID",
+				"tags": [
+					"Employee Requests"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"description": "Employee id",
+						"schema": {
+							"$ref": "#/components/schemas/id"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Employee Request Object",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/employee"
+							}
+						}
+					}
+				},
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/components/schemas/employee"
+						}
+					},
+					"400": {
+						"description": "Failed. Bad post data."
+					}
+				}
+			},
+			"delete": {
+				"summary": "Delete Employee by ID",
+				"tags": [
+					"Employee Requests"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"description": "Employee Id",
+						"schema": {
+							"$ref": "#/components/schemas/id"
+						}
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/components/schemas/id"
+						}
+					},
+					"400": {
+						"description": "Failed. Misunderstood Request."
+					},
+					"404": {
+						"description": "Failed. Employee not found."
+					}
+				}
+			},
+			"get": {
+				"tags": [
+					"Employee Requests"
+				],
+				"summary": "Get employee with given ID",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"description": "Employee id",
+						"schema": {
+							"$ref": "#/components/schemas/id"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/components/schemas/employee"
+						}
+					},
+					"400": {
+						"description": "Failed. Misunderstood Request."
+					},
+					"404": {
+						"description": "Failed. Employee not found."
+					}
+				}
+			}
+		},
+		"/employee": {
+			"post": {
+				"tags": [
+					"Employee Requests"
+				],
+				"summary": "Create a new employee in DB",
+				"requestBody": {
+					"description": "Employee Post Object",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/employee"
+							}
+						}
+					}
+				},
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"201": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/components/schemas/id"
+						}
+					},
+					"400": {
+						"description": "Failed. Bad post data."
+					}
+				}
+			}
+		},
+		"/filter_by_age/{edad}": {
+			"parameters": [
+				{
+					"name": "edad",
+					"in": "path",
+					"required": true,
+					"description": "Edad para aplicar el filtro",
+					"schema": {
+						"$ref": "#/components/schemas/cantidad"
+					}
+				}
+			],
+			"get": {
+				"tags": [
+					"Filtered Requests."
+				],
+				"summary": "Returns all Employees in DB filter by age.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/components/schemas/employees"
+						}
+					}
+				}
+			}
+		},
+		"/filter_by_antiquity/{edad}": {
+			"parameters": [
+				{
+					"name": "edad",
+					"in": "path",
+					"required": true,
+					"description": "Edad para aplicar el filtro",
+					"schema": {
+						"$ref": "#/components/schemas/cantidad"
+					}
+				}
+			],
+			"get": {
+				"tags": [
+					"Filtered Requests."
+				],
+				"summary": "Returns all Employees in DB filter by antiquity.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/components/schemas/employees"
+						}
+					}
+				}
+			}
+		},
+		"/load-data/{cantidad}": {
+			"parameters": [
+				{
+					"name": "cantidad",
+					"in": "path",
+					"required": true,
+					"description": "Load Fake employees on DB",
+					"schema": {
+						"$ref": "#/components/schemas/cantidad"
+					}
+				}
+			],
+			"post": {
+				"tags": [
+					"Load Data"
+				],
+				"summary": "Load Fake employees on DB.",
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"id": {
+				"properties": {
+					"uuid": {
+						"type": "string"
+					}
+				}
+			},
+			"employee": {
+				"type": "object",
+				"properties": {
+					"nombre": {
+						"type": "string",
+						"format": "string"
+					},
+					"apellido": {
+						"type": "string",
+						"format": "string"
+					},
+					"dni": {
+						"type": "string",
+						"format": "string"
+					},
+					"fecha_nacimiento": {
+						"type": "string",
+						"format": "string"
+					},
+					"fecha_ingreso": {
+						"type": "string",
+						"format": "string"
+					}
+				}
+			},
+			"employees": {
+				"type": "object",
+				"properties": {
+					"employee": {
+						"type": "object",
+						"additionalProperties": {
+							"$ref": "#/components/schemas/employee"
+						}
+					}
+				}
+			},
+			"cantidad": {
+				"type": "string"
+			}
+		}
+	}
+}
