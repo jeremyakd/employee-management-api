@@ -8,9 +8,9 @@ import datetime, os
 
 from flask_swagger_ui import get_swaggerui_blueprint
 
-MONGO_URL = os.environ['MONGO_URL']
-MONGO_PORT = os.environ['MONGO_PORT']
-MONGO_DB = os.environ['MONGO_DB']
+MONGO_URL = os.environ.get("MONGO_URL", 'localhost')
+MONGO_PORT = os.environ.get("MONGO_PORT", '27017')
+MONGO_DB = os.environ.get("MONGO_DB", 'employee')
 
 app = Flask(__name__)
 
@@ -40,40 +40,68 @@ app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 ######################################################## ALTA ########################################################
 @app.route('/employee', methods=['POST'])
 def createEmployee():
-    id = db.employee.insert({
-        'nombre': request.json['nombre'],
-        'apellido': request.json['apellido'],
-        'dni': request.json['dni'],
-        'fecha_nacimiento': datetime.datetime.strptime(request.json['fecha_nacimiento'], '%d-%m-%Y'),
-		'fecha_ingreso': datetime.datetime.strptime(request.json['fecha_ingreso'], '%d-%m-%Y'),
-    })
-    return jsonify(str(ObjectId(id)))
-
+    id = None
+    try:
+        id = db.employee.insert({
+            'nombre': request.json['nombre'],
+            'apellido': request.json['apellido'],
+            'dni': request.json['dni'],
+            'fecha_nacimiento': datetime.datetime.strptime(request.json['fecha_nacimiento'], '%d-%m-%Y'),
+            'fecha_ingreso': datetime.datetime.strptime(request.json['fecha_ingreso'], '%d-%m-%Y'),
+        })
+    except Exception as e:
+        return "Error al crear", 400
+    #return jsonify(str(ObjectId(id)))
+    return jsonify({
+        "message":"Empleado creado",
+        "id": str(ObjectId(id)),
+    }), 201
 
 ######################################################## BAJA ########################################################
 @app.route('/employee/<id>', methods=['DELETE'])
 def deleteEmployee(id):
-	db.employee.delete_one({'_id': ObjectId(id)})
-	return jsonify({'message': 'Employee Deleted'})
+    try:
+        employee = db.employee.find_one_and_delete({'_id': ObjectId(id)})
+        if not employee:
+            return "No se encontró empleado.", 404
+    except Exception as e:
+        return "No se encontró empleado.", 404
+    return jsonify({
+        "message":"Employee Deleted",
+        "id": str(ObjectId(id)),
+    }), 204
+	# return jsonify({'message': 'Employee Deleted'})
 
 #################################################### MODIFICACION ####################################################
 @app.route('/employee/<id>', methods=['POST'])
 def updateEmployee(id):
-	print(request.json)
-	db.employee.update_one({'_id': ObjectId(id)}, {"$set": {
+    print(request.json)
+    db.employee.update_one({'_id': ObjectId(id)}, {"$set": {
 		'nombre': request.json['nombre'],
 		'apellido': request.json['apellido'],
 		'dni': request.json['dni'],
 		'fecha_nacimiento': request.json['fecha_nacimiento'],
 		'fecha_ingreso': request.json['fecha_ingreso'],
 	}})
-	return jsonify({'message': 'Employee Updated'})
+    employee = db.employee.find_one({'_id': ObjectId(id)})
+    return jsonify({
+        '_id': str(ObjectId(employee['_id'])),
+        'nombre': employee['nombre'],
+        'apellido': employee['apellido'],
+        'dni': employee['dni'],
+        'fecha_nacimiento': employee['fecha_nacimiento'],
+        'fecha_ingreso': employee['fecha_ingreso'],
+    })
 
 
 #################################################### CONSULTA POR ID #################################################
 @app.route('/employee/<id>', methods=['GET'])
 def getEmployee(id):
-    employee = db.employee.find_one({'_id': ObjectId(id)})
+    employee = None
+    try:
+        employee = db.employee.find_one({'_id': ObjectId(id)})
+    except Exception as e:
+        print("e", e)
     if employee is not None:
         return jsonify({
             '_id': str(ObjectId(employee['_id'])),
@@ -84,6 +112,7 @@ def getEmployee(id):
             'fecha_ingreso': employee['fecha_ingreso'],
             })
     else:
+        return "No se encontró empleado.", 404
         return jsonify({ "mesage": "No se encontró empleado." })
 
 
