@@ -187,7 +187,7 @@ def deleteEmployees():
 ################################################ CARGAR EMPLEADOS ###################################################
 @app.route('/load-data/<cantidad>', methods=['POST'])
 def load_data(cantidad):
-    from load_data import create_names
+    from scripts.load_data import create_names
     _employees = create_names(cantidad)
     return jsonify({ "mesage": _employees })
 

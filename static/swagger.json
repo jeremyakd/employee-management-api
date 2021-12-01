@@ -3,7 +3,7 @@
 	"info": {
 		"description": "CRUD de empleados con Flask & MongoDB.",
 		"version": "1.0.0",
-		"title": "Register registration."
+		"title": "EMPLOYEE REGISTRATION"
 	},
 	"paths": {
 		"/employees": {
