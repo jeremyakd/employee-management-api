@@ -96,7 +96,6 @@ def test_add_new_employee_bad_date_format():
         'fecha_ingreso': '20-03-2010'
     }
     response = requests.post('%s/employee' % (BASE_URL), json=payload)
-    print("response", response)
     assert_true(response.status_code == 400)
 
 

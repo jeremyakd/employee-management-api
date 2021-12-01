@@ -40,6 +40,9 @@ app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 ######################################################## ALTA ########################################################
 @app.route('/employee', methods=['POST'])
 def createEmployee():
+    """
+    Create a new employee with data provided
+    """
     id = None
     try:
         id = db.employee.insert({
@@ -60,6 +63,9 @@ def createEmployee():
 ######################################################## BAJA ########################################################
 @app.route('/employee/<id>', methods=['DELETE'])
 def deleteEmployee(id):
+    """
+    Delete a employee with id provided
+    """
     try:
         employee = db.employee.find_one_and_delete({'_id': ObjectId(id)})
         if not employee:
@@ -75,7 +81,9 @@ def deleteEmployee(id):
 #################################################### MODIFICACION ####################################################
 @app.route('/employee/<id>', methods=['POST'])
 def updateEmployee(id):
-    print(request.json)
+    """
+    Update a employee with id provided
+    """
     db.employee.update_one({'_id': ObjectId(id)}, {"$set": {
 		'nombre': request.json['nombre'],
 		'apellido': request.json['apellido'],
@@ -97,6 +105,9 @@ def updateEmployee(id):
 #################################################### CONSULTA POR ID #################################################
 @app.route('/employee/<id>', methods=['GET'])
 def getEmployee(id):
+    """
+    Get a employee with id provided
+    """
     employee = None
     try:
         employee = db.employee.find_one({'_id': ObjectId(id)})
@@ -113,12 +124,14 @@ def getEmployee(id):
             })
     else:
         return "No se encontró empleado.", 404
-        return jsonify({ "mesage": "No se encontró empleado." })
 
 
 #################################################### FILTRO POR EDAD #################################################
 @app.route('/filter_by_age/<edad>', methods=['GET'])
 def employees_by_age(edad):
+    """
+    Return a list of employees filtered age provided.
+    """
     now = datetime.datetime.now()
     # con la fecha seteo el dia limite de busqueda y lo guardo en la variable hasta
     hasta = now - relativedelta(years=int(edad))
@@ -145,6 +158,9 @@ def employees_by_age(edad):
 ################################################ FILTRO POR ANTIGUEDAD ###############################################
 @app.route('/filter_by_antiquity/<antiguedad>', methods=['GET'])
 def employees_by_antiquity(antiguedad):
+    """
+    Return a list of employees filtered antiquity provided.
+    """
     now = datetime.datetime.now()
     hasta = now - relativedelta(years=int(antiguedad))
     desde = (hasta - relativedelta(years=1) - datetime.timedelta(days=1))
@@ -165,6 +181,9 @@ def employees_by_antiquity(antiguedad):
 ############################################### TODOS LOS EMPLEADOS ##################################################
 @app.route('/employees', methods=['GET'])
 def getEmployees():
+    """
+    Return all employees on DB.
+    """
     employees = []
     for doc in db.employee.find():
         employees.append({
@@ -180,6 +199,10 @@ def getEmployees():
 ############################################ BORRAR TODOS LOS EMPLEADOS #############################################
 @app.route('/employees', methods=['DELETE'])
 def deleteEmployees():
+    """
+    Delete all employees on DB.
+    PLEASE BE CAREFUL !!!
+    """
     db.employee.delete_many({})
     return jsonify({"message": "droped!"})
 
@@ -187,6 +210,9 @@ def deleteEmployees():
 ################################################ CARGAR EMPLEADOS ###################################################
 @app.route('/load-data/<cantidad>', methods=['POST'])
 def load_data(cantidad):
+    """
+    Receives an amount per parameter and load on DB with fake data.
+    """
     from scripts.load_data import create_names
     _employees = create_names(cantidad)
     return jsonify({ "mesage": _employees })

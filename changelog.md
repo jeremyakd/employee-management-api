@@ -35,3 +35,8 @@
 \- Reestructuración del repositorio, actualizacion del README.
 \- Correcciones varias minimas.
 \- Se agrega servidor Nginx y un compose con build.
+\- Actualizacion de changelog
+\- Actualizacion de docker-compose con imagenes de mi hub.
+\- Limpieza de código
+\- Se actualiza documentación
+\- Se agrega descripción a las funciones de los endpoints.
