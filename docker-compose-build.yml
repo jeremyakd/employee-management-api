@@ -1,0 +1,30 @@
+version: '3.3'
+
+services:
+
+  employee-management-api:
+    container_name: employee-management-api
+    build: 
+      context: . 
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URL=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=employee
+      - BASE_URL=http://localhost:5000
+
+  nginx-employee-management-api:
+    container_name: nginx-employee-management-api
+    build: 
+      context: . 
+      dockerfile: nginx/Dockerfile
+    depends_on:
+      - employee-management-api
+    ports:
+      - "80:80"
+
+  mongo:
+    image: mongo
+    restart: always
