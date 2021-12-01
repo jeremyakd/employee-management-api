@@ -30,7 +30,7 @@
 					"200": {
 						"description": "OK",
 						"schema": {
-							"$ref": "#/components/schemas/employees"
+							"$ref": "#/components/schemas/delemployees"
 						}
 					}
 				}
@@ -310,6 +310,18 @@
 			},
 			"cantidad": {
 				"type": "string"
+			},
+			"delemployees":{
+				"type": "object",
+				"properties":{
+					"message":{
+						"type": "string",
+						"format": "string"
+					},
+					"id":{
+						"$ref": "#/components/schemas/id"
+					}
+				}
 			}
 		}
 	}

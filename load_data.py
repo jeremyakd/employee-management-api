@@ -3,9 +3,9 @@ import mongoengine
 import datetime
 import os
 
-MONGO_URL = os.environ['MONGO_URL']
-MONGO_PORT = os.environ['MONGO_PORT']
-MONGO_DB = os.environ['MONGO_DB']
+MONGO_URL = os.environ.get("MONGO_URL", 'localhost')
+MONGO_PORT = os.environ.get("MONGO_PORT", '27017')
+MONGO_DB = os.environ.get("MONGO_DB", 'employee')
 
 def create_names(cant):
     client = mongoengine.connect(host='mongodb://' + MONGO_URL + ':' +  MONGO_PORT + '/' + MONGO_DB)
@@ -35,9 +35,5 @@ def create_names(cant):
         except Exception as e:
             print("e", e)
             return False
-        #print("Se carga empleado {} => {}".format(x, result))
-    #if db.employee.count() == int(cant):
-    return "Ser cargaron {} empleados.".format(cant)
-    #else:
-    #    return False
-        # print('id: ' + str(result.inserted_id) + ' name: ' + fake_name)
+    return "Se cargaron {} empleados.".format(cant)
+
