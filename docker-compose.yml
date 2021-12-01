@@ -3,7 +3,7 @@ version: '3.3'
 services:
 
   employee-management-api:
-    image: employee-management-api:1.0.0
+    image: jeremyakd/employee-management-api:1.0.0
     environment:
       - MONGO_URL=mongo
       - MONGO_PORT=27017
@@ -14,8 +14,8 @@ services:
     depends_on:
       - mongo
 
-  nginx-employee-management-api:
-    image: nginx-employee-management-api:1.0.0
+  nginx:
+    image: jeremyakd/nginx:1.0.0
     depends_on:
       - employee-management-api
     ports:
